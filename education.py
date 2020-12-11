@@ -15,8 +15,8 @@ class Class:
         """Set the number of credits of the class."""
         self.num_of_credits = num_of_credits
 
-    def set_granted_lecture_room(self, granted_lecture_room):
-        """Set the granted lecture room of the class."""
+    def add_granted_room(self, granted_room):
+        """Add a granted room to the class."""
         
 
 def test():
