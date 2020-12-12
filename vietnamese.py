@@ -99,6 +99,7 @@ def test():
     sorted_names = sorted(names, key = vntoascii)
     print(names)
     print(sorted_names)
+# Tên ở trên chưa được sắp xếp đúng do hàm vntoascii được áp dụng lên toàn bộ tên chứ không phải lên từng phần họ, tên, tên đệm và ưu tiên so sánh tên rồi tới họ rồi cuối cùng mới tới tên đệm.
 #
     test_VnFullName()
 #
