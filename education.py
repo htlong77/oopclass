@@ -13,24 +13,24 @@ class Student:
         """Set name for the student."""
         self.name = VnFullName(name)
 
-class Class:
-    """Class managed!!!"""
+class Course:
+    """Course managed!!!"""
     def __init__(self, code):
-#subject, num_of_credits, day_of_week, class_hours, class_room
-        """Initialize the class with a class code."""
+#subject, num_of_credits, day_of_week, course_hours, course_room
+        """Initialize the course with a course code."""
         self.code = code
         self.students = []
         
     def set_subject(self, subject):
-        """Set the subject of the class."""
+        """Set the subject of the course."""
         self.subject = subject
 
     def set_num_of_credits(self, num_of_credits):
-        """Set the number of credits of the class."""
+        """Set the number of credits of the course."""
         self.num_of_credits = num_of_credits
 
     def add_granted_room(self, granted_room):
-        """Add a granted room to the class."""
+        """Add a granted room to the course."""
 
     def load_students(self, filename):
         """Load student informations from 'filename'."""
@@ -60,10 +60,10 @@ class Class:
         for student in self.students:
             print(f"{student.name}")
 
-def test_Class():
-    "Test 'Class' class!!!"
-    print("Testing 'Class' class...")
-    phy3176 = Class("PHY3176")
+def test_Course():
+    "Test 'Course' class!!!"
+    print("Testing 'Course' class...")
+    phy3176 = Course("PHY3176")
     phy3176.set_subject("Cấu trúc và phản ứng hạt nhân")
     phy3176.set_num_of_credits(3)
     #
@@ -71,7 +71,7 @@ def test_Class():
     assert(phy3176.subject == "Cấu trúc và phản ứng hạt nhân")
     assert(phy3176.num_of_credits == 3)
     print("All passed. Done!!!")
-    phy3176.load_students('student_infos.csv')
+    phy3176.load_students('phy3176_20202021__1st_semester.csv')
     print("Before sorting names.")
     phy3176.print_names()
     phy3176.sort_students_by_name()
@@ -80,7 +80,7 @@ def test_Class():
 
 def test():
     """Test command goes here!!!"""
-    test_Class()
+    test_Course()
         
 if __name__ == "__main__":
     test()

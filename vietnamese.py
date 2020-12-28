@@ -38,7 +38,7 @@ class VnFullName():
 
     def __str__(self):
         """Refined Vietnamese full name!!!"""
-        return f"""Tên đầy đủ:{self.full_name}"""
+        return f"""{self.full_name}"""
         
 def vntoascii(vntxt):
 # Bắt chước code cung cấp tại địa chỉ 
