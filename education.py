@@ -1,7 +1,56 @@
 """
 Education  related!!!
 """
+try:
+  from lxml import etree
+  print("running with lxml.etree")
+except ImportError:
+  try:
+    # Python 2.5
+    import xml.etree.cElementTree as etree
+    print("running with cElementTree on Python 2.5+")
+  except ImportError:
+    try:
+      # Python 2.5
+      import xml.etree.ElementTree as etree
+      print("running with ElementTree on Python 2.5+")
+    except ImportError:
+      try:
+        # normal cElementTree install
+        import cElementTree as etree
+        print("running with cElementTree")
+      except ImportError:
+        try:
+          # normal ElementTree install
+          import elementtree.ElementTree as etree
+          print("running with ElementTree")
+        except ImportError:
+          print("Failed to import ElementTree from any known place")
 from vietnamese import *
+
+class Semester:
+    """Semester related"""
+    def __init__(self, id, description=None):
+        """Initialize new student with his/her id."""
+        self.id = id
+        self.description = description
+        self.courses = []
+
+    def add_course(self, course):
+        """Add course."""
+        self.courses.append(course)
+
+    def to_xml(self):
+        """To xml"""
+        root = etree.Element("semester", id=self.id, description=self.description)
+        for course in self.courses:
+            root.append(etree.Element('course', code=course.code))
+        return etree.tostring(root, encoding="UTF-8", pretty_print=True).decode()
+
+    def __str__(self):
+        return f"""Semester ID: {self.id}
+Description: {self.description}"""
+
 class Student:
     """Student related"""
 
@@ -60,6 +109,13 @@ class Course:
         for student in self.students:
             print(f"{student.name}")
 
+def test_Semester():
+    "Test 'Semester' class!!!"
+    print("Testing 'Semester' class...")
+    hk12021 = Semester("hk12021", "Học kỳ I, năm học 2020-2021")
+    print(hk12021)
+    print("All passed!!!")
+
 def test_Course():
     "Test 'Course' class!!!"
     print("Testing 'Course' class...")
@@ -80,7 +136,8 @@ def test_Course():
 
 def test():
     """Test command goes here!!!"""
-    test_Course()
+#    test_Course()
+    test_Semester()
         
 if __name__ == "__main__":
     test()
