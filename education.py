@@ -109,6 +109,12 @@ class Course:
         for student in self.students:
             print(f"{student.name}")
 
+    def __str__(self):
+      if hasattr(self, 'subject'):
+        return f"{self.code}:{self.subject}"
+      else:
+        return f"{self.code}"
+
 def test_Semester():
     "Test 'Semester' class!!!"
     print("Testing 'Semester' class...")

@@ -2,7 +2,22 @@
 from education import *
 
 semester = None
+course = None
 
+def change_semester_id():
+  """Change semester id."""
+  if semester is not None:
+    id = input("New ID? ")
+    if id != "":
+      semester.id = id
+
+def change_semester_description():
+  """Change semester description."""
+  if semester is not None:
+    description = input("Description? ")
+    if description != "":
+      semester.description = description
+      
 def new_semester():
   """Create new semester."""
   id = input("New semester ID? ")
@@ -11,11 +26,11 @@ def new_semester():
   
 def load_semester():
   """Load an existing semester."""
-  filename = input('Load from file ("test.xml")? ')
+  filename = input('Load from file ("semester.xml")? ')
   if filename == "":
-    filename = "test.xml"
+    filename = "semester.xml"
   root = etree.parse(filename).getroot()
-  print(etree.tostring(root, encoding="UTF-8", pretty_print=True).decode())
+#  print(etree.tostring(root, encoding="UTF-8", pretty_print=True).decode())
   id = root.get("id")
   description = root.get("description")
   tmp = Semester(id, description)
@@ -31,23 +46,57 @@ def add_course():
   if semester is not None:
     semester.add_course(Course(code.upper()))
   
+def get_course():
+  """Change to course."""
+  num_of_courses = len(semester.courses)
+  if num_of_courses > 1:
+    index = int(input(f"Course number [1-{num_of_courses}]? "))
+    if 1 <= index <= num_of_courses:
+      return semester.courses[index-1]
+  elif num_of_courses == 1:
+    return semester.courses[0]
+  else: return None
+    
+
+def list_courses():
+  """List course."""
+  if semester is not None:
+    index = 0
+    num_of_courses = len(semester.courses)
+    width = len(str(num_of_courses))
+    for course in semester.courses:
+      index += 1
+      print(f"{index:{width}}/{num_of_courses:{width}}:{course}")
+  
 def save_to_disk():
-  filename = input('Save to file ("test.xml")? ')
+  filename = input('Save to file ("semester.xml")? ')
   if filename == "":
-    filename = "test.xml"
+    filename = "semester.xml"
   ofile = open(filename, 'w')
   ofile.write(semester.to_xml())
   ofile.close()
   
 def display_infos():
-    print(semester)
+  if semester is not None:
+    print(f"""{semester}
+Current course: {course}""")
+  else:
+    print("""Semester ID:
+Description: 
+Current course:""")
+    
     
 def display_menu():
-    print("""1. New Semester
-2. Save to disk
+    print("""1. Load Semester.
+2. List courses.
 3. Add course.
-4. Load Semester.
+4. Change Semester Description.
+5. Change Semester ID.
+6. Save to disk.
+7. Change to course.
+8. New Semester.
 0. Quit!!!
+============
 Your choice: """, end = "" )
 
 if __name__ == "__main__":
@@ -62,13 +111,21 @@ if __name__ == "__main__":
         except:
           print('Please input a number!!!');sys.exit()
         if choice == 1:
-          semester = new_semester()
-        elif choice == 2:
-          save_to_disk()
-        elif choice == 3:
-          add_course() 
-        elif choice == 4:
           semester = load_semester()
+        elif choice == 2:
+          list_courses() 
+        elif choice == 3:
+          course = add_course() 
+        elif choice == 4:
+          change_semester_description()
+        elif choice == 5:
+          change_semester_id()
+        elif choice == 6:
+          save_to_disk()
+        elif choice == 7:
+          course = get_course()
+        elif choice == 8:
+          semester = new_semester()
         else:
           pass
         
