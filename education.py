@@ -94,6 +94,10 @@ class Course:
             self.students.append(new_student)
         ifile.close()
 
+    def load_enrolled_students(self, filename):
+        """Load enrolled students from 'filename'."""
+        print(f"Load enrolled students from '{filename}'")
+
     def sort_students_by_name(self):
         """Sort students by name."""
         lenlist = len(self.students)
@@ -133,7 +137,7 @@ def test_Course():
     assert(phy3176.subject == "Cấu trúc và phản ứng hạt nhân")
     assert(phy3176.num_of_credits == 3)
     print("All passed. Done!!!")
-    phy3176.load_students('phy3176_20202021__1st_semester.csv')
+    phy3176.load_students('old_load.csv')
     print("Before sorting names.")
     phy3176.print_names()
     phy3176.sort_students_by_name()
@@ -142,8 +146,9 @@ def test_Course():
 
 def test():
     """Test command goes here!!!"""
-#    test_Course()
+    test_Course()
     test_Semester()
         
 if __name__ == "__main__":
     test()
+    

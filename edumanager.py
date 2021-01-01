@@ -57,6 +57,13 @@ def get_course():
     return semester.courses[0]
   else: return None
     
+def load_enrolled_students():
+  """Load enrolled students."""
+  csvfile = input("Csv file to load from (enrolled_students.csv)? ")
+  if csvfile == "":
+    csvfile = "enrolled_students.csv"
+  if course is not None:
+    course.load_enrolled_students(csvfile)
 
 def list_courses():
   """List course."""
@@ -95,6 +102,7 @@ def display_menu():
 6. Save to disk.
 7. Change to course.
 8. New Semester.
+9. Load enrolled students.
 0. Quit!!!
 ============
 Your choice: """, end = "" )
@@ -126,6 +134,8 @@ if __name__ == "__main__":
           course = get_course()
         elif choice == 8:
           semester = new_semester()
+        elif choice == 9:
+          semester = load_enrolled_students()
         else:
           pass
         
