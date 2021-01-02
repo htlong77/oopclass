@@ -24,6 +24,23 @@ def new_semester():
   description = input("Description? ").strip()
   return Semester(id, description)
   
+def load_semester_from(filename):
+  """Load an existing semester."""
+  root = etree.parse(filename).getroot()
+  id = root.get("id")
+  description = root.get("description")
+  tmp = Semester(id, description)
+  for child in root:
+    if child.tag == "course":
+      code = child.attrib['code']
+      course_tmp = Course(code)
+      for child_of_course in child:
+        if child_of_course.tag == "ids":
+          ids = child_of_course.text.split(',')
+          course_tmp.student_ids = ids
+      tmp.add_course(course_tmp)
+  return tmp
+
 def load_semester():
   """Load an existing semester."""
   filename = input('Load from file ("semester.xml")? ')
@@ -37,7 +54,12 @@ def load_semester():
   for child in root:
     if child.tag == "course":
       code = child.attrib['code']
-      tmp.add_course(Course(code))
+      course_tmp = Course(code)
+      for child_of_course in child:
+        if child_of_course.tag == "ids":
+          ids = child_of_course.text.split(',')
+          course_tmp.student_ids = ids
+      tmp.add_course(course_tmp)
   return tmp
 
 def add_course():
@@ -73,7 +95,7 @@ def list_courses():
     width = len(str(num_of_courses))
     for course in semester.courses:
       index += 1
-      print(f"{index:{width}}/{num_of_courses:{width}}:{course}")
+      print(f"{index:{width}}/{num_of_courses:{width}}: {course} ({len(course.student_ids)} students).")
   
 def save_to_disk():
   filename = input('Save to file ("semester.xml")? ')
@@ -86,7 +108,7 @@ def save_to_disk():
 def display_infos():
   if semester is not None:
     print(f"""{semester}
-Current course: {course}""")
+    Current course: {course} ({len(course.student_ids)} students).""")
   else:
     print("""Semester ID:
 Description: 
@@ -102,7 +124,7 @@ def display_menu():
 6. Save to disk.
 7. Change to course.
 8. New Semester.
-9. Load enrolled students.
+9. Load enrolled students for current course.
 0. Quit!!!
 ============
 Your choice: """, end = "" )
@@ -111,6 +133,9 @@ if __name__ == "__main__":
     """Main program"""
     import sys
     choice = 1
+    filename = "semester.xml"
+    semester = load_semester_from(filename)
+    if len(semester.courses) > 0: course = semester.courses[0]
     while choice != 0:
         display_infos()
         display_menu()
@@ -120,6 +145,7 @@ if __name__ == "__main__":
           print('Please input a number!!!');sys.exit()
         if choice == 1:
           semester = load_semester()
+          if len(semester.courses) > 0: course = semester.courses[0]
         elif choice == 2:
           list_courses() 
         elif choice == 3:
@@ -135,7 +161,7 @@ if __name__ == "__main__":
         elif choice == 8:
           semester = new_semester()
         elif choice == 9:
-          semester = load_enrolled_students()
+          load_enrolled_students()
         else:
           pass
         
