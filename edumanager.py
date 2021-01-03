@@ -3,6 +3,8 @@ from education import *
 
 semester = None
 course = None
+student_database_file = None
+basic_information_df = None
 
 def change_semester_id():
   """Change semester id."""
@@ -46,21 +48,7 @@ def load_semester():
   filename = input('Load from file ("semester.xml")? ')
   if filename == "":
     filename = "semester.xml"
-  root = etree.parse(filename).getroot()
-#  print(etree.tostring(root, encoding="UTF-8", pretty_print=True).decode())
-  id = root.get("id")
-  description = root.get("description")
-  tmp = Semester(id, description)
-  for child in root:
-    if child.tag == "course":
-      code = child.attrib['code']
-      course_tmp = Course(code)
-      for child_of_course in child:
-        if child_of_course.tag == "ids":
-          ids = child_of_course.text.split(',')
-          course_tmp.student_ids = ids
-      tmp.add_course(course_tmp)
-  return tmp
+  return load_semester_from(filename)
 
 def add_course():
   """Add course."""
@@ -105,14 +93,53 @@ def save_to_disk():
   ofile.write(semester.to_xml())
   ofile.close()
   
+def save_student_database_to_csv_file():
+  """Save student database to csv file (Ascending order by student's ID)."""
+  default_file = student_database_file
+#  default_file = 'test.csv'
+  csvfile = input(f"Csv file to save to ({default_file})? ")
+  if csvfile == "":
+    csvfile = default_file
+  print(f"Save to file '{csvfile}'")
+  #https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.sort_values.html
+  basic_information_df.sort_values(by='Mã sinh viên', inplace=True)
+  # https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_csv.html
+  basic_information_df.to_csv(csvfile, index=False)
+
+def basic_informations_from_csv_file(csvfile):
+  """Load basic information from csv file 'filename'."""
+  df = pandas.read_csv(csvfile, parse_dates=['Timestamp'])
+  basic_info_df = df.loc[:,['Mã sinh viên', 'Họ và tên sinh viên', 'Ngày tháng năm sinh', 'Timestamp']]
+  return basic_info_df
+
+def load_and_append_student_database_from_csv_file():
+  """Load student database from csv file."""
+  csvfile = input(f"Csv file to load from ({student_database_file})? ")
+  if csvfile == "":
+    csvfile = student_database_file
+  print(f"Loading from file '{csvfile}'")
+  tmp = basic_informations_from_csv_file(csvfile)
+  print(f"{len(tmp['Mã sinh viên'])} students.")
+  basic_information_df_tmp = basic_information_df
+  for index in tmp.index:
+    student_id = tmp.loc[index]['Mã sinh viên']
+    # check if student_id exists in database
+    if basic_information_df_tmp[basic_information_df_tmp['Mã sinh viên']==student_id].size == 0:
+      # append student's data to the database
+      student = tmp.loc[index]
+      basic_information_df_tmp = basic_information_df_tmp.append(student)
+  return basic_information_df_tmp
+
 def display_infos():
   if semester is not None:
     print(f"""{semester}
-    Current course: {course} ({len(course.student_ids)} students).""")
+    Current course: {course} ({len(course.student_ids)} students).
+    Student database: '{student_database_file}' ({len(basic_information_df['Mã sinh viên'])} students).""")
   else:
     print("""Semester ID:
 Description: 
-Current course:""")
+Current course:
+Students database:""")
     
     
 def display_menu():
@@ -125,6 +152,8 @@ def display_menu():
 7. Change to course.
 8. New Semester.
 9. Load enrolled students for current course.
+10. Load student informations from csv file (then append to database).
+11. Save student database to csv file.
 0. Quit!!!
 ============
 Your choice: """, end = "" )
@@ -135,6 +164,8 @@ if __name__ == "__main__":
     choice = 1
     filename = "semester.xml"
     semester = load_semester_from(filename)
+    student_database_file = "students.csv"
+    basic_information_df = basic_informations_from_csv_file(student_database_file)
     if len(semester.courses) > 0: course = semester.courses[0]
     while choice != 0:
         display_infos()
@@ -162,6 +193,10 @@ if __name__ == "__main__":
           semester = new_semester()
         elif choice == 9:
           load_enrolled_students()
+        elif choice == 10:
+          basic_information_df = load_and_append_student_database_from_csv_file()
+        elif choice == 11:
+          save_student_database_to_csv_file()
         else:
           pass
         
