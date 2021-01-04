@@ -50,10 +50,6 @@ class Semester:
 #            if len(course.students) > 0:
             if len(course.student_ids) > 0:
               ids_child = etree.SubElement(course_child, 'ids')
-#              ids = []
-#              for student in course.students:
-#                ids.append(student.student_id)
-#              ids_child.text = ','.join(ids)
               ids_child.text = ','.join(course.student_ids)
         return etree.tostring(root, encoding="UTF-8", pretty_print=True).decode()
 

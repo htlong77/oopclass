@@ -142,6 +142,24 @@ def basic_informations_for_id(student_id):
   else:
     return None
 
+def input_id_for_course():
+  """Input id for course."""
+  while True:
+    id = input("Student's ID (0 to quit)? ")
+    try:
+      student_id = int(id)
+      if student_id == 0: break
+      student_info = basic_informations_for_id(student_id)
+      if student_info is not None:
+        print(student_info)
+      else:
+        print(f"The ID '{student_id}' does not exist in the database.")
+      if course.student_ids.count(student_id) == 0:
+        course.student_ids.append(str(student_id))
+        print(f"Course {course.code} now have {len(course.student_ids)} students.")
+    except:
+      print("Must be a number.")
+
 def get_informations_for_id():
   """Get student informations for a given ID."""
   id = input(f"Student's ID? ")
@@ -151,6 +169,8 @@ def get_informations_for_id():
 #      print(basic_information_df[basic_information_df['Mã sinh viên'] == student_id])
     if basic_informations_for_id(student_id) is not None:
       print(basic_informations_for_id(student_id))
+    else:
+      print(f"The ID '{student_id}' does not exist in the database.")
   except:
     print('ID must be a number')
   
@@ -165,7 +185,6 @@ Description:
 Current course:
 Students database:""")
     
-    
 def display_menu():
     print("""1. Load Semester.
 2. List courses.
@@ -179,6 +198,7 @@ def display_menu():
 10. Load student informations from csv file (then append to database).
 11. Save student database to csv file.
 12. Get student informations from a given ID.
+13. Input ID for course.
 0. Quit!!!
 ============
 Your choice: """, end = "" )
@@ -225,6 +245,8 @@ if __name__ == "__main__":
           save_student_database_to_csv_file()
         elif choice == 12:
           get_informations_for_id()
+        elif choice == 13:
+          input_id_for_course()
         else:
           pass
         
