@@ -67,6 +67,11 @@ def get_course():
     return semester.courses[0]
   else: return None
     
+def print_course_students(course):
+  """Print students of the course."""
+  for student_id in course.student_ids:
+    print(basic_informations_for_id(int(student_id)))
+
 def load_enrolled_students():
   """Load enrolled students."""
   csvfile = input("Csv file to load from (enrolled_students.csv)? ")
@@ -130,6 +135,25 @@ def load_and_append_student_database_from_csv_file():
       basic_information_df_tmp = basic_information_df_tmp.append(student)
   return basic_information_df_tmp
 
+def basic_informations_for_id(student_id):
+  """Load basic information from database for a given ID."""
+  if basic_information_df[basic_information_df['Mã sinh viên'] == student_id].size != 0:
+    return basic_information_df[basic_information_df['Mã sinh viên'] == student_id]
+  else:
+    return None
+
+def get_informations_for_id():
+  """Get student informations for a given ID."""
+  id = input(f"Student's ID? ")
+  try:
+    student_id = int(id)
+#    if basic_information_df[basic_information_df['Mã sinh viên'] == student_id].size != 0:
+#      print(basic_information_df[basic_information_df['Mã sinh viên'] == student_id])
+    if basic_informations_for_id(student_id) is not None:
+      print(basic_informations_for_id(student_id))
+  except:
+    print('ID must be a number')
+  
 def display_infos():
   if semester is not None:
     print(f"""{semester}
@@ -154,6 +178,7 @@ def display_menu():
 9. Load enrolled students for current course.
 10. Load student informations from csv file (then append to database).
 11. Save student database to csv file.
+12. Get student informations from a given ID.
 0. Quit!!!
 ============
 Your choice: """, end = "" )
@@ -189,6 +214,7 @@ if __name__ == "__main__":
           save_to_disk()
         elif choice == 7:
           course = get_course()
+          print_course_students(course)
         elif choice == 8:
           semester = new_semester()
         elif choice == 9:
@@ -197,6 +223,8 @@ if __name__ == "__main__":
           basic_information_df = load_and_append_student_database_from_csv_file()
         elif choice == 11:
           save_student_database_to_csv_file()
+        elif choice == 12:
+          get_informations_for_id()
         else:
           pass
         
