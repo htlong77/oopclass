@@ -5,6 +5,7 @@ semester = None
 course = None
 student_database_file = None
 basic_information_df = None
+bonus_penalty_points_df = None
 
 def change_semester_id():
   """Change semester id."""
@@ -125,7 +126,7 @@ def load_and_append_student_database_from_csv_file():
   print(f"Loading from file '{csvfile}'")
   tmp = basic_informations_from_csv_file(csvfile)
   print(f"{len(tmp['Mã sinh viên'])} students.")
-  basic_information_df_tmp = basic_information_df
+  basic_information_dfiloc_tmp = basic_information_df
   for index in tmp.index:
     student_id = tmp.loc[index]['Mã sinh viên']
     # check if student_id exists in database
@@ -185,6 +186,45 @@ Description:
 Current course:
 Students database:""")
     
+def load_bonus_penalty_points(csvfile):
+  """Load bonus penalty points from database"""
+  df = pandas.read_csv(csvfile)
+  return df
+
+def save_bonus_penalty_points(csvfile):
+  """Save bonus penalty points to database"""
+  bonus_penalty_points_df.to_csv(csvfile, index=False)
+
+def id_from_name(fullname):
+  """Find the ID of the student from his/her fullname."""
+  filter_df = basic_information_df[basic_information_df['Họ và tên sinh viên'] == fullname]
+  if filter_df.size == 0:
+    return None
+  else:
+    num_of_students = len(filter_df.index)
+    print(f"Số sinh viên có tên là '{fullname}': {num_of_students}")
+    if num_of_students == 1:
+      return filter_df.iloc[0]['Mã sinh viên']
+    else:
+      print(f"""Đó là các sinh viên có mã như sau:
+    {filter_df['Mã sinh viên']}""")
+      return 'Multiple results'
+      
+def add_bonus_penalty_points():
+  """Add bonus penalty points to database"""
+  fullname = input('Name of student? ')
+  student_id = id_from_name(fullname)
+  if student_id is not None:
+    print(f"The student ID of {fullname} is: {student_id}")
+    points = input('Bonus/Penalty points? ')
+    comments = input('Explanation (Không nhớ)? ')
+    point_infos = pandas.Series(data=[student_id, course.code, points, comments], index = bonus_penalty_points_df.columns)
+    tmp = bonus_penalty_points_df.append(point_infos, ignore_index=True)
+    return tmp
+  else:
+    print(f"The student {fullname} does not exist in the database!!!")
+    return None
+
 def display_menu():
     print("""1. Load Semester.
 2. List courses.
@@ -199,6 +239,8 @@ def display_menu():
 11. Save student database to csv file.
 12. Get student informations from a given ID.
 13. Input ID for course.
+14. Add bonus/penalty points.
+15. Save bonus/penalty points.
 0. Quit!!!
 ============
 Your choice: """, end = "" )
@@ -211,6 +253,8 @@ if __name__ == "__main__":
     semester = load_semester_from(filename)
     student_database_file = "students.csv"
     basic_information_df = basic_informations_from_csv_file(student_database_file)
+    bonus_penalty_points_df = load_bonus_penalty_points('bonus_penalty_points.csv')
+    print(bonus_penalty_points_df)
     if len(semester.courses) > 0: course = semester.courses[0]
     while choice != 0:
         display_infos()
@@ -234,7 +278,7 @@ if __name__ == "__main__":
           save_to_disk()
         elif choice == 7:
           course = get_course()
-          print_course_students(course)
+#          print_course_students(course)
         elif choice == 8:
           semester = new_semester()
         elif choice == 9:
@@ -247,6 +291,10 @@ if __name__ == "__main__":
           get_informations_for_id()
         elif choice == 13:
           input_id_for_course()
+        elif choice == 14:
+          bonus_penalty_points_df = add_bonus_penalty_points()
+        elif choice == 15:
+          save_bonus_penalty_points('bonus_penalty_points.csv')
         else:
           pass
         
