@@ -216,14 +216,19 @@ def add_bonus_penalty_points():
   student_id = id_from_name(fullname)
   if student_id is not None:
     print(f"The student ID of {fullname} is: {student_id}")
-    points = input('Bonus/Penalty points? ')
-    comments = input('Explanation (Không nhớ)? ')
-    point_infos = pandas.Series(data=[student_id, course.code, points, comments], index = bonus_penalty_points_df.columns)
-    tmp = bonus_penalty_points_df.append(point_infos, ignore_index=True)
-    return tmp
+    # check if this ID is enrolled in the course
+    if str(student_id) in course.student_ids:
+      points = input('Bonus/Penalty points? ')
+      comments = input('Explanation (Không nhớ)? ')
+      point_infos = pandas.Series(data=[student_id, course.code, points, comments], index = bonus_penalty_points_df.columns)
+      tmp = bonus_penalty_points_df.append(point_infos, ignore_index=True)
+      return tmp
+    else:
+      print(f"Course {course.code} does not have student with ID {student_id}")
+      return bonus_penalty_points_df
   else:
     print(f"The student {fullname} does not exist in the database!!!")
-    return None
+    return bonus_penalty_points_df
 
 def display_menu():
     print("""1. Load Semester.
