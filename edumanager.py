@@ -208,7 +208,8 @@ def id_from_name(fullname):
     else:
       print(f"""Đó là các sinh viên có mã như sau:
     {filter_df['Mã sinh viên']}""")
-      return 'Multiple results'
+      choice = input('Sử dụng mã: ')
+      return choice
       
 def add_bonus_penalty_points():
   """Add bonus penalty points to database"""
